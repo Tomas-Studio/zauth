@@ -1,7 +1,22 @@
 {
-  "name": "nuxt-app",
+  "name": "zauth",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@8.15.6",
+  "description": "Zauth SSO",
+  "author": "Tunji Oalkunle",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tomas-Studio/zauth.git"
+  },
+  "keywords": [
+    "auth",
+    "drizzle",
+    "sso",
+    "neon db",
+    "nitro"
+  ],
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
