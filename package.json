@@ -1,7 +1,7 @@
 {
   "name": "zauth",
-  "private": true,
   "type": "module",
+  "private": true,
   "packageManager": "pnpm@8.15.6",
   "description": "Zauth SSO",
   "author": "Tunji Oalkunle",
@@ -22,11 +22,23 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint ."
   },
   "dependencies": {
     "nuxt": "^3.11.2",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.13.3",
+    "lint-staged": "^15.2.2",
+    "simple-git-hooks": "^2.11.1"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "na lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint . --fix"
   }
 }
