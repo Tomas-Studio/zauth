@@ -1,6 +1,7 @@
 import type { H3Event } from 'h3'
 import { eventHandler } from 'h3'
 import { defu } from 'defu'
+import { parsePath, withQuery } from 'ufo'
 import type { OAuthConfig } from '~/types'
 
 export interface OAuthMicrosoftConfig {
@@ -57,10 +58,10 @@ export interface OAuthMicrosoftConfig {
 }
 
 export function microsoftEventHandler({ config, onSuccess, onError }: OAuthConfig<OAuthMicrosoftConfig>) {
-  return eventHandler((event: H3Event) => {
+  return eventHandler(async (event: H3Event) => {
     config = defu(config, { authorizationParams: {} }) as OAuthMicrosoftConfig
 
-    // const { code } = getQuery(event)
+    const { code } = getQuery(event)
 
     if (!config.clientId || !config.clientSecret || !config.tenant) {
       const error = createError({
@@ -72,13 +73,79 @@ export function microsoftEventHandler({ config, onSuccess, onError }: OAuthConfi
       return onError(event, error)
     }
 
-    // const authorizationURL = config.authorizationURL || `https://login.microsoftonline.com/${config.tenant}/oauth2/v2.0/authorize`
-    // const tokenURL = config.tokenURL || `https://login.microsoftonline.com/${config.tenant}/oauth2/v2.0/token`
-    // const redirectUrl =  config.redirectUrl || getRequestURL(event).href
+    const authorizationURL = config.authorizationURL || `https://login.microsoftonline.com/${config.tenant}/oauth2/v2.0/authorize`
+    const tokenURL = config.tokenURL || `https://login.microsoftonline.com/${config.tenant}/oauth2/v2.0/token`
+    const redirectUrl = config.redirectUrl || getRequestURL(event).href
 
-    const tokens = ''
+    if (!code) {
+      const scope = config.scope && config.scope.length > 0 ? config.scope : ['User.Read']
+      // Redirect to Microsoft OAuth login page
+      return sendRedirect(
+        event,
+        withQuery(authorizationURL, {
+          client_id: config.clientId,
+          response_type: 'code+id_token',
+          redirect_uri: redirectUrl,
+          scope: scope.join(' '),
+          ...config.authorizationParams,
+        }),
+      )
+    }
 
-    const user = ''
+    const data = new URLSearchParams()
+    data.append('grant_type', 'authorization_code')
+    data.append('client_id', config.clientId)
+    data.append('client_secret', config.clientSecret)
+    data.append('redirect_uri', parsePath(redirectUrl).pathname)
+    data.append('code', String(code))
+
+    // Request an access token with a client_secret
+    const tokens: any = await $fetch(
+      tokenURL as string,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: data,
+      },
+    ).catch((error) => {
+      return error
+    })
+
+    if (tokens.error) {
+      const error = createError({
+        statusCode: 401,
+        message: `Microsoft login failed: ${tokens.error?.data?.error_description || 'Unknown error'}`,
+        data: tokens,
+      })
+      if (!onError)
+        throw error
+      return onError(event, error)
+    }
+
+    const tokenType = tokens.token_type
+    const accessToken = tokens.access_token
+    const userURL = config.userURL || 'https://graph.microsoft.com/v1.0/me'
+
+    const user: any = await $fetch(userURL, {
+      headers: {
+        Authorization: `${tokenType} ${accessToken}`,
+      },
+    }).catch((error) => {
+      return { error }
+    })
+
+    if (user.error) {
+      const error = createError({
+        statusCode: 401,
+        message: `Microsoft login failed: ${user.error || 'Unknown error'}`,
+        data: user,
+      })
+      if (!onError)
+        throw error
+      return onError(event, error)
+    }
 
     return onSuccess(event, {
       user,
