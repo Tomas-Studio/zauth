@@ -59,7 +59,7 @@ export interface OAuthMicrosoftConfig {
 
 export function microsoftEventHandler({ config, onSuccess, onError }: OAuthConfig<OAuthMicrosoftConfig>) {
   return eventHandler(async (event: H3Event) => {
-    config = defu(config, { authorizationParams: {} }) as OAuthMicrosoftConfig
+    config = defu(config, useRuntimeConfig(event).oauth?.microsoft, { authorizationParams: {} }) as OAuthMicrosoftConfig
 
     const { code } = getQuery(event)
 
