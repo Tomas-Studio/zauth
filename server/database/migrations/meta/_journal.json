@@ -8,6 +8,13 @@
       "when": 1713142250558,
       "tag": "0000_swift_tomorrow_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1713273536356,
+      "tag": "0001_wooden_goblin_queen",
+      "breakpoints": true
     }
   ]
 }
