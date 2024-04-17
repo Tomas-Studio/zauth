@@ -33,6 +33,7 @@
     "@unocss/nuxt": "^0.59.2",
     "@vueuse/nuxt": "^10.9.0",
     "drizzle-orm": "^0.30.8",
+    "jsonwebtoken": "^9.0.2",
     "nuxt": "^3.11.2",
     "pg": "^8.11.5",
     "vue": "^3.4.21",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.13.3",
+    "@types/jsonwebtoken": "^9.0.6",
     "drizzle-kit": "^0.20.14",
     "lint-staged": "^15.2.2",
     "simple-git-hooks": "^2.11.1"
