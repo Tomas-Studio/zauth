@@ -11,5 +11,10 @@ export function generateAccessToken(event: H3Event, payload: Payload) {
 export function decodeAccessToken(event: H3Event, token: string) {
   const config = useRuntimeConfig(event)
 
-  return jwt.verify(token, config.jwt.accessSecret)
+  try {
+    return jwt.verify(token, config.jwt.accessSecret)
+  }
+  catch (error) {
+    return null
+  }
 }

@@ -18,9 +18,19 @@ export type Auth_Type = ObjectValues<typeof AUTH_TYPE>
 export interface User {
   id: string
   email: string
+  firstname: string
+  lastname: string
   role: Role
+  authType: Auth_Type
 }
 
 export interface UserSession {
   user?: User
 }
+
+export interface NewRT {
+  expireAt: Date
+  userId: string
+}
+
+export type NewUser = User

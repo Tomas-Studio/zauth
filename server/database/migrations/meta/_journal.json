@@ -15,6 +15,13 @@
       "when": 1713273536356,
       "tag": "0001_wooden_goblin_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1713405621177,
+      "tag": "0002_petite_lady_ursula",
+      "breakpoints": true
     }
   ]
 }
