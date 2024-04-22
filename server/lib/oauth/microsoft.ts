@@ -84,7 +84,7 @@ export function microsoftEventHandler({ config, onSuccess, onError }: OAuthConfi
         event,
         withQuery(authorizationURL, {
           client_id: config.clientId,
-          response_type: 'code+id_token',
+          response_type: 'code',
           redirect_uri: redirectUrl,
           scope: scope.join(' '),
           ...config.authorizationParams,

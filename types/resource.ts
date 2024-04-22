@@ -22,6 +22,8 @@ export interface User {
   lastname: string
   role: Role
   authType: Auth_Type
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface UserSession {
@@ -33,4 +35,8 @@ export interface NewRT {
   userId: string
 }
 
-export type NewUser = User
+export type NewUser = Omit<User, 'createdAt' | 'updatedAt'>
+
+export interface RefreshToken {
+
+}

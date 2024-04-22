@@ -1,8 +1,11 @@
 import type { H3Event } from 'h3'
 import jwt from 'jsonwebtoken'
-import type { Payload } from '~/types'
+import type { User } from '~/types'
 
-export function generateAccessToken(event: H3Event, payload: Payload) {
+export function generateAccessToken(
+  event: H3Event,
+  payload: Omit<User, 'createdAt' | 'updatedAt'>,
+) {
   const config = useRuntimeConfig(event)
 
   return jwt.sign(payload, config.jwt.accessSecret, { expiresIn: '10m' })

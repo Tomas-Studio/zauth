@@ -1,22 +1,32 @@
+import type { Auth_Type, Role } from './resource'
+
 export interface Payload {
   /**
    * Subject to whom the token refers to, userId
    */
   sub: string
   /**
-   * Issued at (seconds sine Unix epoch)
+   * Subject's id
    */
-  iat: number
+  id: string
   /**
    * Subject's email
    */
   email: string
   /**
+   * Subject's firstname
+   */
+  firstname: string
+  /**
+   * Subject's lastname
+   */
+  lastname: string
+  /**
    * Subject's role
    */
-  role: 'regular' | 'admin' | 'manager'
+  role: Role
   /**
    * Authentication provider
    */
-  auth_type: 'microsoft' | 'google' | 'linkedin'
+  auth_type: Auth_Type
 }

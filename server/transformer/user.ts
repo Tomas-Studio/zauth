@@ -1,9 +1,16 @@
-import type { Payload } from '~/types'
+import type { Payload, User } from '~/types'
 
-export function userTransformer() {}
-
-export function payloadTransformer(payload: any) {
+export function userTransformer(user: User) {
   return {
-    sub: payload.role,
-  } as Payload
+    id: user.id,
+    email: user.email,
+    firstname: user.firstname,
+    lastname: user.lastname,
+    role: user.role,
+    authType: user.authType,
+  }
+}
+
+export function payloadTransformer(payload: Payload) {
+  return payload
 }

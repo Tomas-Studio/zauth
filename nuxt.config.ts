@@ -12,6 +12,7 @@ export default defineNuxtConfig({
         authorizationURL: '',
         tokenURL: '',
         userURL: '',
+        redirectUrl: '',
       },
     },
     jwt: {
