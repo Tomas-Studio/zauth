@@ -3,6 +3,7 @@ import '@unocss/reset/tailwind.css'
 
 useHead({
   htmlAttrs: { lang: 'en' },
+  bodyAttrs: { class: 'font-sec' },
   link: [{ rel: 'icon', href: '/icon.png' }],
 })
 

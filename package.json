@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.13.3",
+    "@iconify/json": "^2.2.203",
     "@types/jsonwebtoken": "^9.0.6",
     "drizzle-kit": "^0.20.14",
     "lint-staged": "^15.2.2",

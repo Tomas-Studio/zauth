@@ -29,8 +29,8 @@ export default defineConfig({
       fonts: {
         mono: 'DM Mono:300,400',
         sans: 'Inter:300,400,500,600,700',
-        anta: [
-          { name: 'Anta', weights: ['400'] },
+        sec: [
+          { name: 'Hammersmith One', weights: ['400', '500', '600', '700'] },
           { name: 'sans-serif', provider: 'none' },
         ],
       },
