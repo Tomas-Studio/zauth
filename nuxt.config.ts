@@ -23,4 +23,7 @@ export default defineNuxtConfig({
       accessSecret: '',
     },
   },
+  imports: {
+    dirs: ['composables/**'],
+  },
 })

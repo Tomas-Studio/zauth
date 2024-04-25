@@ -1,11 +1,8 @@
 <script setup lang="ts">
 const route = useRoute()
-const isAuthenticated = ref(false)
+const { status, pending, execute } = await useAuthorize(route.query)
 
-onMounted(async () => {
-  if (route.query.code)
-    isAuthenticated.value = true
-})
+route.query.code && await execute()
 </script>
 
 <template>
@@ -23,20 +20,32 @@ onMounted(async () => {
           Signup for free
         </NuxtLink>
       </div>
-      <div v-if="isAuthenticated" mt6 flex py4 text-neutral-8>
-        <div i-svg-spinners:180-ring-with-bg size-5 mr2 />
-        <span>Authorizing, almost there</span>
-      </div>
+
       <button
-        inline-flex items-center v-else mt6 px18 py4
+        v-if="status === 'idle'"
+        inline-flex items-center mt6 px18 py4
         fw500 border border-gray-3 duration-300
         text-neutral-8
         hover="border-blue-5 text-neutral-9"
         active="border-blue-6 text-blue-6"
+        @click="navigateTo('/api/auth/provider/microsoft', { external: true })"
       >
         <div i-logos:microsoft-icon size-4.5 mr2 />
         Sign in with Microsoft
       </button>
+
+      <div v-else-if="pending" mt6 flex py4 text-neutral-8>
+        <div i-svg-spinners:180-ring-with-bg size-5 mr2 mt--2 relative />
+        <span>Authorizing, almost there</span>
+      </div>
+
+      <div v-else mt6 fyc py4 text-neutral-8>
+        <div i-line-md:confirm-circle text-green-5 size-7 mr2 />
+        <span fyc>
+          Authorized, Redirecting
+          <div i-svg-spinners:3-dots-fade h3.5 w6 mt0.5 />
+        </span>
+      </div>
 
       <div mt10>
         <span text-sm fyc text-neutral-5>

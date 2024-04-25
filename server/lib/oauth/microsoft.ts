@@ -57,7 +57,25 @@ export interface OAuthMicrosoftConfig {
   redirectUrl?: string
 }
 
-export function microsoftEventHandler({ config, onSuccess, onError }: OAuthConfig<OAuthMicrosoftConfig>) {
+export interface MicrosoftUserSession {
+  /** User If */
+  'id': string
+  /** unique user identifier */
+  'userPrincipalName': string
+  /** mail of user */
+  'mail': string
+  'displayName': string
+  'surname': string
+  'givenName': string
+  'mobilePhone': string | null
+  'businessPhones': Array<string>
+  'jobTitle': string
+  'officeLocation': string | null
+  'preferredLanguage': string | null
+  '@odata.context': string
+}
+
+export function microsoftEventHandler({ config, onSuccess, onError }: OAuthConfig<OAuthMicrosoftConfig, MicrosoftUserSession>) {
   return eventHandler(async (event: H3Event) => {
     config = defu(config, useRuntimeConfig(event).oauth?.microsoft, { authorizationParams: {} }) as OAuthMicrosoftConfig
 
