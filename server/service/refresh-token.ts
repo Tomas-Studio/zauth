@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { refreshTokens } from '../database/schema'
-import type { NewRT } from '~/types'
+import type { InsertRefreshToken } from '~/types'
 
 export async function getRefreshTokenByUserId(userId: string) {
   return useDB().query.refreshTokens.findFirst({
@@ -9,10 +9,10 @@ export async function getRefreshTokenByUserId(userId: string) {
   })
 }
 
-export async function createRefreshToken(rt: NewRT) {
+export async function createRefreshToken(rt: InsertRefreshToken) {
   return useDB().insert(refreshTokens).values(rt)
-    .onConflictDoNothing({ target: refreshTokens.tokenId })
-    .returning({ token: refreshTokens.tokenId })
+    .onConflictDoUpdate({ target: refreshTokens.userId, set: { expireAt: rt.expireAt } })
+    .returning()
 }
 
 export async function clearRefreshToken(tokenId: string) {

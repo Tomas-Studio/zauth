@@ -21,3 +21,5 @@ export function decodeAccessToken(event: H3Event, token: string) {
     return null
   }
 }
+
+export type Payload = ReturnType<typeof decodeAccessToken>

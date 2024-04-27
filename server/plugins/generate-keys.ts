@@ -6,8 +6,5 @@ export default defineNitroPlugin(async () => {
     return
 
   const atSecret = randomBytes(32).toString('hex')
-  const rtSecret = randomBytes(32).toString('hex')
-
   consola.success('Access Token Secret: ', atSecret)
-  consola.success('Refresh Token Secret: ', rtSecret)
 })
