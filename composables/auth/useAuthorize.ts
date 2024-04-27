@@ -7,7 +7,7 @@ export default async function (param: LocationQuery) {
   )
 
   if (data.value && status.value === 'success') {
-    setToken(data.value.mail)
+    setToken(data.value.accessToken)
     navigateTo('/posts')
   }
 

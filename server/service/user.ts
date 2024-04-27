@@ -1,7 +1,7 @@
 import { users } from '../database/schema'
-import type { NewUser } from '~/types'
+import type { InsertUser } from '~/types'
 
-export async function createUser(user: NewUser) {
+export async function createUser(user: InsertUser) {
   return useDB().insert(users).values(user)
     .onConflictDoNothing({ target: users.email }).returning()
 }

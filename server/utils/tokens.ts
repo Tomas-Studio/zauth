@@ -14,11 +14,12 @@ export async function setRefreshToken(data: User) {
 
 export async function setTokens(event: H3Event, user: User) {
   const accessToken = generateAccessToken(event, userTransformer(user))
-  const refreshToken = await createRefreshToken({ userId: user.id, expireAt: eAt(4) })
+  const refreshToken = await createRefreshToken({ userId: user.id, expireAt: expireAt(4) })
+  console.log(refreshToken[0].tokenId)
 
   return {
     accessToken,
-    refreshToken: refreshToken[0].token,
+    refreshToken: refreshToken[0].tokenId,
   }
 }
 
@@ -30,7 +31,7 @@ export function sendRefreshToken(event: H3Event, token: string) {
   })
 }
 
-function eAt(i: number) {
+function expireAt(i: number) {
   const date = new Date().setMonth(new Date().getMonth() + i)
   return new Date(date)
 }
