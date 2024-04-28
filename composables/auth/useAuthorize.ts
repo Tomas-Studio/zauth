@@ -1,7 +1,7 @@
 import type { LocationQuery } from 'vue-router'
 
 export default async function (param: LocationQuery) {
-  const { data, pending, status, execute } = await useFetch(
+  const { data, status, execute } = await useFetch(
     '/api/auth/callback/microsoft',
     { query: param, immediate: false },
   )
@@ -15,10 +15,5 @@ export default async function (param: LocationQuery) {
     }
   })
 
-  return {
-    data,
-    pending,
-    status,
-    execute,
-  }
+  return { status }
 }
