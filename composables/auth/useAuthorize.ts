@@ -6,10 +6,14 @@ export default async function (param: LocationQuery) {
     { query: param, immediate: false },
   )
 
-  if (data.value && status.value === 'success') {
-    setToken(data.value.accessToken)
-    navigateTo('/posts')
-  }
+  onNuxtReady(async () => {
+    param.code && await execute()
+
+    if (data.value && status.value === 'success') {
+      setToken(data.value.accessToken)
+      navigateTo('/posts')
+    }
+  })
 
   return {
     data,

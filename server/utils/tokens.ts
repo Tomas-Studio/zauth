@@ -15,7 +15,6 @@ export async function setRefreshToken(data: User) {
 export async function setTokens(event: H3Event, user: User) {
   const accessToken = generateAccessToken(event, userTransformer(user))
   const refreshToken = await createRefreshToken({ userId: user.id, expireAt: expireAt(4) })
-  console.log(refreshToken[0].tokenId)
 
   return {
     accessToken,
@@ -24,10 +23,9 @@ export async function setTokens(event: H3Event, user: User) {
 }
 
 export function sendRefreshToken(event: H3Event, token: string) {
-  setCookie(event, 'refresh_token', token, {
+  setCookie(event, 'RFTKEN', token, {
     httpOnly: true,
     sameSite: true,
-    secure: true,
   })
 }
 

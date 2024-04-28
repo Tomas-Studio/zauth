@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const route = useRoute()
-const { status, pending, execute } = await useAuthorize(route.query)
-
-route.query.code && await execute()
+const { status } = await useAuthorize(route.query)
 </script>
 
 <template>
@@ -22,7 +20,7 @@ route.query.code && await execute()
       </div>
 
       <button
-        v-if="status === 'idle'"
+        v-if="status === 'idle' && !route.query.code"
         inline-flex items-center mt6 px18 py4
         fw500 border border-gray-3 duration-300
         text-neutral-8
@@ -34,17 +32,9 @@ route.query.code && await execute()
         Sign in with Microsoft
       </button>
 
-      <div v-else-if="pending" mt6 flex py4 text-neutral-8>
-        <div i-svg-spinners:180-ring-with-bg size-5 mr2 mt--2 relative />
-        <span>Authorizing, almost there</span>
-      </div>
-
       <div v-else mt6 fyc py4 text-neutral-8>
-        <div i-line-md:confirm-circle text-green-5 size-7 mr2 />
-        <span fyc>
-          Authorized, Redirecting
-          <div i-svg-spinners:3-dots-fade h3.5 w6 mt0.5 />
-        </span>
+        <div i-svg-spinners:180-ring-with-bg text-green-5 size-6 mr2 />
+        <span>Authorizing,  Redirecting....</span>
       </div>
 
       <div mt10>
