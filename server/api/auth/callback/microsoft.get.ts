@@ -23,6 +23,6 @@ export default oauth.microsoftEventHandler({
 
     sendRefreshToken(event, refreshToken)
 
-    return { accessToken }
+    return { accessToken, user: fetchUser }
   },
 })

@@ -11,6 +11,7 @@ export default async function (param: LocationQuery) {
 
     if (data.value && status.value === 'success') {
       setToken(data.value.accessToken)
+      setUser(data.value.user)
       navigateTo('/posts')
     }
   })
