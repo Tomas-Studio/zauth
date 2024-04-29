@@ -1,11 +1,12 @@
 <script setup lang="ts">
 const token = useAccessToken()
-console.log(`token: ${token.value}`)
+const user = useUser()
 </script>
 
 <template>
   <div>
     Posts
     {{ token }}
+    {{ user }}
   </div>
 </template>

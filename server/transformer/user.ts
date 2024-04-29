@@ -1,4 +1,4 @@
-import type { Payload, User } from '~/types'
+import type { User } from '~/types'
 
 export function userTransformer(user: User) {
   return {
@@ -9,8 +9,4 @@ export function userTransformer(user: User) {
     role: user.role,
     authType: user.authType,
   }
-}
-
-export function payloadTransformer(payload: Payload) {
-  return payload
 }
