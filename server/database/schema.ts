@@ -1,6 +1,8 @@
 import { pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { init } from '@paralleldrive/cuid2'
 import { relations } from 'drizzle-orm'
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
+import type { z } from 'zod'
 
 export const roleEnum = pgEnum('role', ['regular', 'admin', 'manager'])
 export const authTypeEnum = pgEnum('auth_type', ['microsoft', 'google', 'linkedin', 'email'])
@@ -49,10 +51,14 @@ export const usersRelations = relations(users, ({ many }) => ({
   post: many(posts),
 }))
 
-export type InsertUser = typeof users.$inferInsert
+export const insertUserSchema = createInsertSchema(users)
+export type InsertUser = z.infer<typeof insertUserSchema>
 
-export type User = typeof users.$inferSelect
+export const selectUserSchema = createSelectSchema(users)
+export type User = z.infer<typeof selectUserSchema>
 
-export type InsertRefreshToken = typeof refreshTokens.$inferInsert
+export const insertRefreshTokenSchema = createInsertSchema(refreshTokens)
+export type InsertRefreshToken = z.infer<typeof insertRefreshTokenSchema>
 
-export type RefreshToken = typeof refreshTokens.$inferSelect
+export const selectRefreshTokenSchema = createSelectSchema(refreshTokens)
+export type RefreshToken = z.infer<typeof selectRefreshTokenSchema>

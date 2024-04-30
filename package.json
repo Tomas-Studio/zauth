@@ -33,6 +33,7 @@
     "@unocss/nuxt": "^0.59.2",
     "@vueuse/nuxt": "^10.9.0",
     "drizzle-orm": "^0.30.8",
+    "drizzle-zod": "^0.5.1",
     "jsonwebtoken": "^9.0.2",
     "nuxt": "^3.11.2",
     "pg": "^8.11.5",
