@@ -116,6 +116,13 @@ export async function useValidatedHeader<T extends Schema | z.ZodRawShape>(
   }
 }
 
+/**
+ * Parse and validate api/data/anything with a schema. Throws an error is validation fails
+ * @param data - A data with of any type
+ * @param schema - A Zod object shape or object schema to validate.
+ * @param statusCode - An error status code
+ * @param statusMessage - An error status message
+ */
 function validateApiWithSchema<T extends z.ZodTypeAny>(
   data: any,
   schema: T,
@@ -130,6 +137,13 @@ function validateApiWithSchema<T extends z.ZodTypeAny>(
   }
 }
 
+/**
+ * Parse data OR promise with a schema. Throws an error is validation fails
+ * @param dataOrPromise - A data or Promise with any type
+ * @param schema - A Zod object shape or object schema to validate.
+ * @param errorCode - An error status code
+ * @param errorMessage - An error status message
+ */
 export async function parseDataAs<T extends z.ZodTypeAny>(
   dataOrPromise: any | Promise<any>,
   schema: T,
