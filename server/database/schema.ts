@@ -1,6 +1,7 @@
 import { pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { relations, sql } from 'drizzle-orm'
 import { init } from '@paralleldrive/cuid2'
-import { relations } from 'drizzle-orm'
+
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import type { z } from 'zod'
 
@@ -18,16 +19,16 @@ export const users = pgTable('users', {
   lastname: text('lastname').notNull(),
   role: roleEnum('role').default('regular').notNull(),
   authType: authTypeEnum('auth_type').default('email').notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at', { mode: 'string' }).notNull().default(sql`now()`),
+  updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().default(sql`now()`),
 })
 
 export const refreshTokens = pgTable('refresh_tokens', {
   tokenId: text('token_id').$defaultFn(() => createRefreshTokenId()).primaryKey(),
-  expireAt: timestamp('expire_at').notNull(),
+  expireAt: timestamp('expire_at', { mode: 'string' }).notNull().default(sql`now()`),
   userId: text('user_id').notNull().unique().references(() => users.id),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at', { mode: 'string' }).notNull().default(sql`now()`),
+  updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().default(sql`now()`),
 })
 
 export const posts = pgTable('posts', {
@@ -35,8 +36,8 @@ export const posts = pgTable('posts', {
   title: text('title').notNull(),
   content: text('content').notNull(),
   userId: text('user_id').notNull().references(() => users.id),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at', { mode: 'string' }).notNull().default(sql`now()`),
+  updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().default(sql`now()`),
 })
 
 export const refreshTokensRelations = relations(refreshTokens, ({ one }) => ({

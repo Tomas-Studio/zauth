@@ -31,5 +31,5 @@ export function sendRefreshToken(event: H3Event, token: string) {
 
 function expireAt(i: number) {
   const date = new Date().setMonth(new Date().getMonth() + i)
-  return new Date(date)
+  return new Date(date).toISOString()
 }
