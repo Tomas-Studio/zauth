@@ -26,4 +26,10 @@ export default defineNuxtConfig({
   imports: {
     dirs: ['composables/**'],
   },
+  experimental: {
+    asyncContext: true,
+  },
+  vueuse: {
+    ssrHandlers: true,
+  },
 })

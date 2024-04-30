@@ -16,7 +16,7 @@ export default oauth.microsoftEventHandler({
 
       sendRefreshToken(event, refreshToken)
 
-      return { accessToken }
+      return { accessToken, user: createdUser[0] }
     }
 
     const { accessToken, refreshToken } = await setTokens(event, fetchUser)
