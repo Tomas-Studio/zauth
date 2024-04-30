@@ -12,8 +12,9 @@ import {
 export default defineConfig({
   shortcuts: [
     {
-      fyc: 'flex items-center',
-      fcc: 'flex items-center justify-center',
+      'fyc': 'flex items-center',
+      'fcc': 'flex items-center justify-center',
+      'btn-auth': 'inline-flex items-center px18 py4 fw500 rounded-lg border border-gray-3 duration-300 text-neutral-8 hover:(border-blue-5 text-neutral-9) active:(border-blue-6 text-blue-6)',
     },
     [/^size-(.*)$/, ([, c]) => `w-${c} h-${c}`],
   ],

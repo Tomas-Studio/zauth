@@ -19,18 +19,21 @@ const { status } = await useAuthorize(route.query)
         </NuxtLink>
       </div>
 
-      <button
-        v-if="status === 'idle' && !route.query.code"
-        inline-flex items-center mt6 px18 py4
-        fw500 border border-gray-3 duration-300
-        text-neutral-8
-        hover="border-blue-5 text-neutral-9"
-        active="border-blue-6 text-blue-6"
-        @click="navigateTo('/api/auth/provider/microsoft', { external: true })"
-      >
-        <div i-logos:microsoft-icon size-4.5 mr2 />
-        Sign in with Microsoft
-      </button>
+      <div v-if="status === 'idle' && !route.query.code" flex="~ col">
+        <button
+          btn-auth mt6
+          @click="navigateTo('/api/auth/provider/microsoft', { external: true })"
+        >
+          <div i-logos:microsoft-icon size-4.5 mr2 />
+          Sign in with Microsoft
+        </button>
+        <button
+          btn-auth mt5
+        >
+          <div i-logos:google-icon size-4.5 mr2 />
+          Sign in with Google
+        </button>
+      </div>
 
       <div v-else mt6 fyc py4 text-neutral-8>
         <div i-svg-spinners:180-ring-with-bg text-green-5 size-6 mr2 />

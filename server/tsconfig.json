@@ -1,6 +1,7 @@
 {
   "extends": "../.nuxt/tsconfig.server.json",
   "compilerOptions": {
-    "allowJs": false
+    "allowJs": false,
+    "strict": true
   }
 }
