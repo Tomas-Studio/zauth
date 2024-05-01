@@ -1,8 +1,9 @@
 import { StorageSerializers, useStorage } from '@vueuse/core'
+import { STORAGE_KEYS } from '~/constants'
 import type { User } from '~/types'
 
 export const useAccessToken = () => useState<string>('access_token')
-export const useUser = () => useStorage<User>('APPUSR', null, undefined, { serializer: StorageSerializers.object })
+export const useUser = () => useStorage<User>(STORAGE_KEYS.USER, null, undefined, { serializer: StorageSerializers.object })
 
 /**
  * Set access token
@@ -20,6 +21,7 @@ export function setUser(user: User) {
   useUser().value = user
 }
 
-export function logout() {
-
+export async function useLogout() {
+  await useRequestFetch()('/api/auth/logout')
+    .then(() => { navigateTo('/') })
 }

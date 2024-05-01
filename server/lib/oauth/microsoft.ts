@@ -3,7 +3,7 @@ import { eventHandler } from 'h3'
 import { defu } from 'defu'
 import { parsePath, withQuery } from 'ufo'
 import type { z } from 'zod'
-import type { ZodProviderLoginResponse } from '../../api/auth/callback/microsoft.get'
+import type { ZodLoginResponse } from '../../api/auth/callback/microsoft.get'
 import type { OAuthConfig } from '~/types'
 
 export interface OAuthMicrosoftConfig {
@@ -89,7 +89,7 @@ export interface MicrosoftUserSession {
   '@odata.context': string
 }
 
-export function microsoftEventHandler({ config, onSuccess, onError }: OAuthConfig<OAuthMicrosoftConfig, z.infer<typeof ZodProviderLoginResponse>, MicrosoftUserSession>) {
+export function microsoftEventHandler({ config, onSuccess, onError }: OAuthConfig<OAuthMicrosoftConfig, z.infer<typeof ZodLoginResponse>, MicrosoftUserSession>) {
   return eventHandler(async (event: H3Event) => {
     config = defu(config, useRuntimeConfig(event).oauth?.microsoft, { authorizationParams: {} }) as OAuthMicrosoftConfig
 
