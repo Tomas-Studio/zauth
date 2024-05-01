@@ -21,6 +21,9 @@ export function setUser(user: User) {
   useUser().value = user
 }
 
+/**
+ * Logout user
+ */
 export async function useLogout() {
   await useRequestFetch()('/api/auth/logout')
     .then(() => { navigateTo('/') })

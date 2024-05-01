@@ -9,25 +9,17 @@ import { STORAGE_KEYS } from '~/constants'
 
 export async function setRefreshToken(data: User) {
   const user = await getUserByEmail(data.email)
-
   return user
 }
 
 export async function setTokens(event: H3Event, user: User) {
   const accessToken = generateAccessToken(event, userTransformer(user))
   const refreshToken = await createRefreshToken({ userId: user.id, expireAt: expireAt(4) })
-
-  return {
-    accessToken,
-    refreshToken: refreshToken[0].tokenId,
-  }
+  return { accessToken, refreshToken: refreshToken[0].tokenId }
 }
 
 export function sendRefreshToken(event: H3Event, token: string) {
-  setCookie(event, STORAGE_KEYS.REFRESH, token, {
-    httpOnly: true,
-    sameSite: true,
-  })
+  setCookie(event, STORAGE_KEYS.REFRESH, token, { httpOnly: true, sameSite: true })
 }
 
 export function clearCookies(event: H3Event, keys: Array<string>) {
