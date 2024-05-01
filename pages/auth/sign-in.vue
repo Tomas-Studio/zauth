@@ -6,14 +6,14 @@ const { status } = await useAuthorize(route.query)
 <template>
   <main min-h-100dvh h-100dvh wfull relative>
     <div absolute text-7 tracking-tighter top-6 left-8>
-      North<span text-green-7>Care</span>
+      North<span text-green-7>Base</span>
     </div>
     <div hfull wfull flex="~ col" items-center justify-center>
       <h1 font-sec text-2xl mb3 text-neutral-8 tracking-tight>
-        Sign into North<span text-green-7>Care</span>
+        Sign into North<span text-green-7>Base</span>
       </h1>
       <div text-lg>
-        New to NorthCare
+        New to NorthBase
         <NuxtLink to="/" text-blue-5 hover:text-blue-6 duration-300>
           Signup for free
         </NuxtLink>

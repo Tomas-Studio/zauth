@@ -9,9 +9,9 @@ useHead({
 
 useSeoMeta({
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
-  title: 'Zauth App',
+  title: 'NorthBase',
   description:
-    'Zauth an SSO implemenation using access & refresh token',
+    'NorthBase an SSO implemenation using access & refresh token',
   ogImage: '/social-image.png',
   twitterImage: '/social-image.png',
   twitterCard: 'summary_large_image',

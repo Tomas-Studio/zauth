@@ -6,6 +6,19 @@ export const useAccessToken = () => useState<string>('access_token')
 export const useUser = () => useStorage<User>(STORAGE_KEYS.USER, null, undefined, { serializer: StorageSerializers.object })
 
 /**
+ * User session details & function
+ * @returns loggedIn, user, logout
+ */
+export function useUserSession() {
+  const userState = useUser()
+  return {
+    loggedIn: computed(() => Boolean(userState.value)),
+    user: computed(() => userState.value || null),
+    logout,
+  }
+}
+
+/**
  * Set access token
  * @param token - A JWT token
  */
@@ -24,7 +37,10 @@ export function setUser(user: User) {
 /**
  * Logout user
  */
-export async function useLogout() {
+async function logout() {
   await useRequestFetch()('/api/auth/logout')
-    .then(() => { navigateTo('/') })
+    .then(() => {
+      useAccessToken().value = ''
+      navigateTo('/')
+    })
 }
