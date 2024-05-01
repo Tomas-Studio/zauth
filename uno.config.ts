@@ -27,12 +27,16 @@ export default defineConfig({
     presetIcons(),
     presetTypography(),
     presetWebFonts({
-      provider: 'google',
+      provider: 'fontshare',
       fonts: {
-        mono: 'DM Mono:300,400',
-        sans: 'Inter:300,400,500,600,700',
-        sec: [
-          { name: 'Hammersmith One', weights: ['400', '500', '600', '700'] },
+        // mono: 'DM Mono:300,400',
+        // sans: 'Inter:300,400,500,600,700',
+        // sec: [
+        //   { name: 'Hammersmith One', weights: ['400', '500', '600', '700'] },
+        //   { name: 'sans-serif', provider: 'google' },
+        // ],
+        default: [
+          { name: 'Pally', weights: ['400', '500', '600', '700'] },
           { name: 'sans-serif', provider: 'none' },
         ],
       },

@@ -3,7 +3,7 @@ import '@unocss/reset/tailwind.css'
 
 useHead({
   htmlAttrs: { lang: 'en' },
-  bodyAttrs: { class: 'font-sec' },
+  bodyAttrs: { class: 'font-default' },
   link: [{ rel: 'icon', href: '/northbase.png' }],
 })
 
