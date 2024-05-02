@@ -3,15 +3,15 @@ import '@unocss/reset/tailwind.css'
 
 useHead({
   htmlAttrs: { lang: 'en' },
-  bodyAttrs: { class: 'font-sec' },
-  link: [{ rel: 'icon', href: '/icon.png' }],
+  bodyAttrs: { class: 'font-default' },
+  link: [{ rel: 'icon', href: '/northbase.png' }],
 })
 
 useSeoMeta({
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
-  title: 'Zauth App',
+  title: 'NorthBase',
   description:
-    'Zauth an SSO implemenation using access & refresh token',
+    'NorthBase an SSO implemenation using access & refresh token',
   ogImage: '/social-image.png',
   twitterImage: '/social-image.png',
   twitterCard: 'summary_large_image',

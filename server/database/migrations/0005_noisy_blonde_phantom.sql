@@ -1,0 +1,1 @@
+ALTER TABLE "refresh_tokens" ALTER COLUMN "expire_at" SET DEFAULT now();

@@ -1,12 +1,15 @@
 <script setup lang="ts">
-const token = useAccessToken()
-const user = useUser()
+const { logout, user } = useUserSession()
 </script>
 
 <template>
   <div>
     Posts
-    {{ token }}
-    {{ user }}
+    <pre>
+      {{ user }}
+    </pre>
   </div>
+  <button fxc py1 w20 border @click="logout">
+    Logout
+  </button>
 </template>

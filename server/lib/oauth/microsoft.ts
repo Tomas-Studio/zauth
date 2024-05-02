@@ -2,6 +2,8 @@ import type { H3Event } from 'h3'
 import { eventHandler } from 'h3'
 import { defu } from 'defu'
 import { parsePath, withQuery } from 'ufo'
+import type { z } from 'zod'
+import type { ZodLoginResponse } from '../../api/auth/callback/microsoft.get'
 import type { OAuthConfig } from '~/types'
 
 export interface OAuthMicrosoftConfig {
@@ -58,24 +60,36 @@ export interface OAuthMicrosoftConfig {
 }
 
 export interface MicrosoftUserSession {
-  /** User If */
+  /** User identity */
   'id': string
-  /** unique user identifier */
+  /** Unique user identifier */
   'userPrincipalName': string
-  /** mail of user */
+  /** Mail of user */
   'mail': string
+  /** User firstname & lastname */
   'displayName': string
+  /** User's surname */
   'surname': string
+  /** User's lastname */
   'givenName': string
+  /** Uer's phone number */
   'mobilePhone': string | null
+  /** User's business phone numbers */
   'businessPhones': Array<string>
+  /** User's job title */
   'jobTitle': string
+  /** User's office location */
   'officeLocation': string | null
+  /** User's preferred language */
   'preferredLanguage': string | null
+  /**
+   * OData context annotation.
+   * It helps clients understand where the data comes from and how it relates to other resources.
+   */
   '@odata.context': string
 }
 
-export function microsoftEventHandler({ config, onSuccess, onError }: OAuthConfig<OAuthMicrosoftConfig, MicrosoftUserSession>) {
+export function microsoftEventHandler({ config, onSuccess, onError }: OAuthConfig<OAuthMicrosoftConfig, z.infer<typeof ZodLoginResponse>, MicrosoftUserSession>) {
   return eventHandler(async (event: H3Event) => {
     config = defu(config, useRuntimeConfig(event).oauth?.microsoft, { authorizationParams: {} }) as OAuthMicrosoftConfig
 
