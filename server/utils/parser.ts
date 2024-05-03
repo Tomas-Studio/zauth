@@ -1,16 +1,7 @@
 import type { H3Event, HTTPHeaderName } from 'h3'
 import { z } from 'zod'
 
-type UnknownKeysParam = 'passthrough' | 'strict' | 'strip'
-
-type Schema<U extends UnknownKeysParam = any> =
-  | z.ZodObject<any, U>
-  | z.ZodUnion<[Schema<U>, ...Schema<U>[]]>
-  | z.ZodIntersection<Schema<U>, Schema<U>>
-  | z.ZodDiscriminatedUnion<string, z.ZodObject<any, U>[]>
-  | z.ZodEffects<z.ZodTypeAny>
-
-type ParsedData<T extends Schema | z.ZodRawShape> = T extends Schema
+type ParsedData<T extends z.ZodTypeAny | z.ZodRawShape> = T extends z.ZodTypeAny
   ? z.output<T>
   : T extends z.ZodRawShape
     ? z.output<z.ZodObject<T>>
@@ -18,24 +9,12 @@ type ParsedData<T extends Schema | z.ZodRawShape> = T extends Schema
 
 export type ParseOptions = Partial<z.ParseParams>
 
-function createBadRequest(
-  error: any,
-  statusCode: number = 422,
-  statusMesaage: string = 'Bad Request',
-) {
-  return createError({
-    statusCode,
-    statusText: statusMesaage,
-    data: error,
-  })
-}
-
 /**
  * Parse and validate request query from event handler. Throws an error if validation fails.
  * @param event - A H3 event object.
  * @param schema - A Zod object shape or object schema to validate.
  */
-export async function useValidatedQuery<T extends Schema | z.ZodRawShape>(
+export async function parseQueryAs<T extends z.ZodTypeAny | z.ZodRawShape>(
   event: H3Event,
   schema: T,
   parseOptions?: ParseOptions,
@@ -43,11 +22,10 @@ export async function useValidatedQuery<T extends Schema | z.ZodRawShape>(
   try {
     const query = getQuery(event)
     const finalSchema = schema instanceof z.ZodType ? schema : z.object(schema)
-    const parsed = await finalSchema.parseAsync(query, parseOptions)
-    return parsed
+    return await finalSchema.parseAsync(query, parseOptions)
   }
   catch (error) {
-    throw createBadRequest(error)
+    throw createErrorResponse(error)
   }
 }
 
@@ -56,7 +34,7 @@ export async function useValidatedQuery<T extends Schema | z.ZodRawShape>(
  * @param event - A H3 event object.
  * @param schema - A Zod object shape or object schema to validate.
  */
-export async function useValidatedBody<T extends Schema | z.ZodRawShape>(
+export async function parseBodyAs<T extends z.ZodTypeAny | z.ZodRawShape>(
   event: H3Event,
   schema: T,
   parseOptions?: ParseOptions,
@@ -64,11 +42,10 @@ export async function useValidatedBody<T extends Schema | z.ZodRawShape>(
   try {
     const body = await readBody(event)
     const finalSchema = schema instanceof z.ZodType ? schema : z.object(schema)
-    const parsed = await finalSchema.parseAsync(body, parseOptions)
-    return parsed
+    return await finalSchema.parseAsync(body, parseOptions)
   }
   catch (error) {
-    throw createBadRequest(error)
+    throw createErrorResponse(error)
   }
 }
 
@@ -77,7 +54,7 @@ export async function useValidatedBody<T extends Schema | z.ZodRawShape>(
  * @param event - A H3 event object.
  * @param schema - A Zod object shape or object schema to validate.
  */
-export async function useValidatedParams<T extends Schema | z.ZodRawShape>(
+export async function parseParamsAs<T extends z.ZodTypeAny | z.ZodRawShape>(
   event: H3Event,
   schema: T,
   parseOptions?: ParseOptions,
@@ -85,11 +62,10 @@ export async function useValidatedParams<T extends Schema | z.ZodRawShape>(
   try {
     const params = getRouterParams(event)
     const finalSchema = schema instanceof z.ZodType ? schema : z.object(schema)
-    const parsed = await finalSchema.parseAsync(params, parseOptions)
-    return parsed
+    return await finalSchema.parseAsync(params, parseOptions)
   }
   catch (error) {
-    throw createBadRequest(error)
+    throw createErrorResponse(error)
   }
 }
 
@@ -99,7 +75,7 @@ export async function useValidatedParams<T extends Schema | z.ZodRawShape>(
  * @param name - A header name.
  * @param schema - A Zod object shape or object schema to validate.
  */
-export async function useValidatedHeader<T extends Schema | z.ZodRawShape>(
+export async function parseHeaderAs<T extends z.ZodTypeAny | z.ZodRawShape>(
   event: H3Event,
   name: HTTPHeaderName,
   schema: T,
@@ -108,50 +84,53 @@ export async function useValidatedHeader<T extends Schema | z.ZodRawShape>(
   try {
     const headers = getHeader(event, name)
     const finalSchema = schema instanceof z.ZodType ? schema : z.object(schema)
-    const parsed = await finalSchema.parseAsync(headers, parseOptions)
-    return parsed
+    return await finalSchema.parseAsync(headers, parseOptions)
   }
   catch (error) {
-    throw createBadRequest(error, 422, 'Header parsing failed')
+    throw createErrorResponse(error, 422, 'Header parsing failed')
   }
 }
 
 /**
- * Parse and validate api/data/anything with a schema. Throws an error is validation fails
- * @param data - A data with of any type
+ * Parse and validate a cookie from event handler. Throws an error if validation fails.
+ * @param event - A H3 event object.
+ * @param key - A cookie key.
  * @param schema - A Zod object shape or object schema to validate.
- * @param statusCode - An error status code
- * @param statusMessage - An error status message
  */
-function validateApiWithSchema<T extends z.ZodTypeAny>(
-  data: any,
+export async function parseCookieAs<T extends z.ZodTypeAny | z.ZodRawShape>(
+  event: H3Event,
+  key: string,
   schema: T,
-  statusCode: number,
-  statusMessage: string,
-): z.infer<T> {
+  parseOptions?: ParseOptions,
+): Promise<ParsedData<T>> {
   try {
-    return schema.parse(data)
+    const cookie = getCookie(event, key)
+    const finalSchema = schema instanceof z.ZodType ? schema : z.object(schema)
+    return await finalSchema.parseAsync(cookie, parseOptions)
   }
   catch (error) {
-    throw createBadRequest(error, statusCode, statusMessage)
+    throw createErrorResponse(error, 401, 'Unauthorized')
   }
 }
 
 /**
  * Parse data OR promise with a schema. Throws an error is validation fails
- * @param dataOrPromise - A data or Promise with any type
+ * @param dataOrPromise - data object.
  * @param schema - A Zod object shape or object schema to validate.
- * @param errorCode - An error status code
- * @param errorMessage - An error status message
  */
-export async function parseDataAs<T extends z.ZodTypeAny>(
-  dataOrPromise: any | Promise<any>,
+export async function parseDataAs<T extends z.ZodTypeAny | z.ZodRawShape>(
+  dataOrPromise: any,
   schema: T,
-  errorCode = 422,
-  errorMessage = 'Data parsing failed',
-) {
-  const data = await dataOrPromise
-  return validateApiWithSchema(data, schema, errorCode, errorMessage)
+  parseOptions?: ParseOptions,
+): Promise<ParsedData<T>> {
+  try {
+    const data = await dataOrPromise
+    const finalSchema = schema instanceof z.ZodType ? schema : z.object(schema)
+    return await finalSchema.parseAsync(data, parseOptions)
+  }
+  catch (error) {
+    throw createErrorResponse(error, 422, 'Data parsing failed')
+  }
 }
 
 export { z }
