@@ -4,26 +4,22 @@ import { userTransformer } from '../transformer/user'
 import { clearRefreshToken, createRefreshToken, getRefreshTokenById } from '../service/refresh-token'
 import type { User } from '~/types'
 import { STORAGE_KEYS } from '~/constants'
+import { selectRefreshTokenSchema } from '~/types'
 
-/**
- * Require a user refresh token. Throws an error if refresh token is invalid.
- * @param event - A H3 event object.
- */
 export async function requireRefreshToken(
   event: H3Event,
   opts: { statusCode?: number, message?: string } = {},
 ) {
   const rtId = await parseCookieAs(event, STORAGE_KEYS.REFRESH, z.string())
-  const refreshToken = await getRefreshTokenById(rtId)
+  const refreshToken = await parseDataAs(getRefreshTokenById(rtId), selectRefreshTokenSchema)
 
-  if (!isValidRefreshToken(refreshToken!.expireAt)) {
+  if (!isValidRefreshToken(refreshToken.expireAt)) {
     throw createError({
       statusCode: opts.statusCode || 401,
       message: opts.message || 'Unauthorized',
     })
   }
-
-  return refreshToken?.tokenId
+  return refreshToken.tokenId
 }
 
 export async function setRefreshToken(data: User) {
