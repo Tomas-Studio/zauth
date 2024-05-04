@@ -10,7 +10,7 @@ export async function requireRefreshToken(event: H3Event) {
 
 export async function setTokens(event: H3Event, user: User) {
   const accessToken = generateAccessToken(event, userTransformer(user))
-  const refreshToken = await createRefreshToken({ userId: user.id, expireAt: expireAt(61) })
+  const refreshToken = await createRefreshToken({ userId: user.id, expireAt: expireAt(1) })
   return { accessToken, refreshToken: refreshToken[0] }
 }
 
@@ -30,19 +30,27 @@ export function clearCookies(event: H3Event, keys: Array<string>) {
 
 export async function clearUserSession(event: H3Event, keys: Array<string>) {
   const result = await safeParseCookieAs(event, STORAGE_KEYS.REFRESH, z.string())
-  if (result.success) {
-    const response = await clearRefreshToken(result.data)
-    response[0].deletedId && clearCookies(event, keys)
-  }
+  if (result.success)
+    await clearRefreshToken(result.data)
+
+  clearCookies(event, keys)
 }
 
-function expireAt(i: number) {
-  const date = new Date().setMinutes(new Date().getMinutes() + i)
+/**
+ * Get expiry date for refreshToken
+ * @param month - number of months
+ */
+function expireAt(month: number) {
+  const date = new Date().setMonth(new Date().getMonth() + month)
   return new Date(date).toISOString()
 }
 
+/**
+ * Convert expires to maxAge to set in cookie
+ * @param expiresDate -An Expiry Date
+ */
 function expiresToMaxAge(expiresDate: Date) {
-  const durationMs: number = expiresDate.getTime() - Date.now()
-  const maxAgeSeconds: number = Math.floor(durationMs / 1000)
+  const durationMs = expiresDate.getTime() - Date.now()
+  const maxAgeSeconds = Math.floor(durationMs / 1000)
   return maxAgeSeconds
 }
