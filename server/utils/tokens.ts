@@ -1,25 +1,26 @@
 import type { H3Event } from 'h3'
-import { getUserByEmail } from '../service/user'
 import { userTransformer } from '../transformer/user'
 import { clearRefreshToken, createRefreshToken } from '../service/refresh-token'
-import type { User } from '~/types'
+import type { RefreshToken, User } from '~/types'
 import { STORAGE_KEYS } from '~/constants'
 
-// export async function requireRefreshToken(event: H3Event){}
-
-export async function setRefreshToken(data: User) {
-  const user = await getUserByEmail(data.email)
-  return user
+export async function requireRefreshToken(event: H3Event) {
+  return await parseCookieAs(event, STORAGE_KEYS.REFRESH, z.string())
 }
 
 export async function setTokens(event: H3Event, user: User) {
   const accessToken = generateAccessToken(event, userTransformer(user))
-  const refreshToken = await createRefreshToken({ userId: user.id, expireAt: expireAt(4) })
-  return { accessToken, refreshToken: refreshToken[0].tokenId }
+  const refreshToken = await createRefreshToken({ userId: user.id, expireAt: expireAt(1) })
+  return { accessToken, refreshToken: refreshToken[0] }
 }
 
-export function sendRefreshToken(event: H3Event, token: string) {
-  setCookie(event, STORAGE_KEYS.REFRESH, token, { httpOnly: true, sameSite: true })
+export function sendRefreshToken(event: H3Event, rtoken: RefreshToken) {
+  setCookie(event, STORAGE_KEYS.REFRESH, rtoken.tokenId, {
+    httpOnly: true,
+    expires: new Date(rtoken.expireAt),
+    sameSite: true,
+    maxAge: expiresToMaxAge(new Date(rtoken.expireAt)),
+  })
 }
 
 export function clearCookies(event: H3Event, keys: Array<string>) {
@@ -28,15 +29,28 @@ export function clearCookies(event: H3Event, keys: Array<string>) {
 }
 
 export async function clearUserSession(event: H3Event, keys: Array<string>) {
-  const refreshTokenId = getCookie(event, STORAGE_KEYS.REFRESH)
-  if (refreshTokenId) {
-    const response = await clearRefreshToken(refreshTokenId)
-    response[0].deletedId && clearCookies(event, keys)
-  }
+  const result = await safeParseCookieAs(event, STORAGE_KEYS.REFRESH, z.string())
+  if (result.success)
+    await clearRefreshToken(result.data)
+
   clearCookies(event, keys)
 }
 
-function expireAt(i: number) {
-  const date = new Date().setMonth(new Date().getMonth() + i)
+/**
+ * Get expiry date for refreshToken
+ * @param month - number of months
+ */
+function expireAt(month: number) {
+  const date = new Date().setMonth(new Date().getMonth() + month)
   return new Date(date).toISOString()
+}
+
+/**
+ * Convert expires to maxAge to set in cookie
+ * @param expiresDate -An Expiry Date
+ */
+function expiresToMaxAge(expiresDate: Date) {
+  const durationMs = expiresDate.getTime() - Date.now()
+  const maxAgeSeconds = Math.floor(durationMs / 1000)
+  return maxAgeSeconds
 }

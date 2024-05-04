@@ -9,6 +9,12 @@ export async function getRefreshTokenByUserId(userId: string) {
   })
 }
 
+export async function getRefreshTokenById(rtId: string) {
+  return useDB().query.refreshTokens.findFirst({
+    where: (refreshTokens, { eq }) => eq(refreshTokens.tokenId, rtId),
+  })
+}
+
 export async function createRefreshToken(rt: InsertRefreshToken) {
   return useDB().insert(refreshTokens).values(rt)
     .onConflictDoUpdate({ target: refreshTokens.userId, set: { expireAt: rt.expireAt } })

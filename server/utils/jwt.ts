@@ -11,15 +11,15 @@ export function generateAccessToken(
   return jwt.sign(payload, config.jwt.accessSecret, { expiresIn: '10m' })
 }
 
-export function decodeAccessToken(event: H3Event, token: string) {
+export async function requireAccessToken(event: H3Event) {
   const config = useRuntimeConfig(event)
-
+  const aToken = await parseHeaderAs(event, 'Authorization', z.string())
   try {
-    return jwt.verify(token, config.jwt.accessSecret)
+    return jwt.verify(aToken, config.jwt.accessSecret)
   }
   catch (error) {
-    return null
+    throw createErrorResponse(error, 401, 'Unauthorized!')
   }
 }
 
-export type Payload = ReturnType<typeof decodeAccessToken>
+// export type Payload = ReturnType<typeof decodeAccessToken>
