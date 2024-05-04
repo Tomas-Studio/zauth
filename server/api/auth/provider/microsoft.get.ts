@@ -1,3 +1,1 @@
-export default oauth.microsoftEventHandler({
-  async onSuccess() {},
-})
+export default oauth.microsoftEventHandler({})
