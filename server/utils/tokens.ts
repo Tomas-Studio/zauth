@@ -1,40 +1,26 @@
 import type { H3Event } from 'h3'
-import { getUserByEmail } from '../service/user'
 import { userTransformer } from '../transformer/user'
-import { clearRefreshToken, createRefreshToken, getRefreshTokenById } from '../service/refresh-token'
-import type { User } from '~/types'
+import { clearRefreshToken, createRefreshToken } from '../service/refresh-token'
+import type { RefreshToken, User } from '~/types'
 import { STORAGE_KEYS } from '~/constants'
-import { selectRefreshTokenSchema } from '~/types'
 
-export async function requireRefreshToken(
-  event: H3Event,
-  opts: { statusCode?: number, message?: string } = {},
-) {
-  const rtId = await parseCookieAs(event, STORAGE_KEYS.REFRESH, z.string())
-  const refreshToken = await parseDataAs(getRefreshTokenById(rtId), selectRefreshTokenSchema)
-
-  if (!isValidRefreshToken(refreshToken.expireAt)) {
-    throw createError({
-      statusCode: opts.statusCode || 401,
-      message: opts.message || 'Unauthorized',
-    })
-  }
-  return refreshToken.tokenId
-}
-
-export async function setRefreshToken(data: User) {
-  const user = await getUserByEmail(data.email)
-  return user
+export async function requireRefreshToken(event: H3Event) {
+  return await parseCookieAs(event, STORAGE_KEYS.REFRESH, z.string())
 }
 
 export async function setTokens(event: H3Event, user: User) {
   const accessToken = generateAccessToken(event, userTransformer(user))
-  const refreshToken = await createRefreshToken({ userId: user.id, expireAt: expireAt(4) })
-  return { accessToken, refreshToken: refreshToken[0].tokenId }
+  const refreshToken = await createRefreshToken({ userId: user.id, expireAt: expireAt(61) })
+  return { accessToken, refreshToken: refreshToken[0] }
 }
 
-export function sendRefreshToken(event: H3Event, token: string) {
-  setCookie(event, STORAGE_KEYS.REFRESH, token, { httpOnly: true, sameSite: true })
+export function sendRefreshToken(event: H3Event, rtoken: RefreshToken) {
+  setCookie(event, STORAGE_KEYS.REFRESH, rtoken.tokenId, {
+    httpOnly: true,
+    expires: new Date(rtoken.expireAt),
+    sameSite: true,
+    maxAge: expiresToMaxAge(new Date(rtoken.expireAt)),
+  })
 }
 
 export function clearCookies(event: H3Event, keys: Array<string>) {
@@ -43,17 +29,20 @@ export function clearCookies(event: H3Event, keys: Array<string>) {
 }
 
 export async function clearUserSession(event: H3Event, keys: Array<string>) {
-  const rtId = await parseCookieAs(event, STORAGE_KEYS.REFRESH, z.string())
-  const response = await clearRefreshToken(rtId)
-  response[0].deletedId && clearCookies(event, keys)
+  const result = await safeParseCookieAs(event, STORAGE_KEYS.REFRESH, z.string())
+  if (result.success) {
+    const response = await clearRefreshToken(result.data)
+    response[0].deletedId && clearCookies(event, keys)
+  }
 }
 
 function expireAt(i: number) {
-  const date = new Date().setMonth(new Date().getMonth() + i)
+  const date = new Date().setMinutes(new Date().getMinutes() + i)
   return new Date(date).toISOString()
 }
 
-function isValidRefreshToken(expireAt: string) {
-  const now = new Date()
-  return now < new Date(expireAt)
+function expiresToMaxAge(expiresDate: Date) {
+  const durationMs: number = expiresDate.getTime() - Date.now()
+  const maxAgeSeconds: number = Math.floor(durationMs / 1000)
+  return maxAgeSeconds
 }

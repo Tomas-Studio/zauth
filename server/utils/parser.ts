@@ -7,6 +7,12 @@ type ParsedData<T extends z.ZodTypeAny | z.ZodRawShape> = T extends z.ZodTypeAny
     ? z.output<z.ZodObject<T>>
     : never
 
+type SafeParsedData<T extends z.ZodTypeAny | z.ZodRawShape> = T extends z.ZodTypeAny
+  ? z.SafeParseReturnType<T, ParsedData<T>>
+  : T extends z.ZodRawShape
+    ? z.SafeParseReturnType<z.ZodObject<T>, ParsedData<T>>
+    : never
+
 export type ParseOptions = Partial<z.ParseParams>
 
 /**
@@ -111,6 +117,23 @@ export async function parseCookieAs<T extends z.ZodTypeAny | z.ZodRawShape>(
   catch (error) {
     throw createErrorResponse(error, 401, 'Unauthorized')
   }
+}
+
+/**
+ * Parse and validate a cookie from event handler. Doesn't error if validation fails.
+ * @param event - A H3 event object.
+ * @param key - A cookie key.
+ * @param schema - A Zod object shape or object schema to validate.
+ */
+export async function safeParseCookieAs<T extends z.ZodTypeAny | z.ZodRawShape>(
+  event: H3Event,
+  key: string,
+  schema: T,
+  parseOptions?: ParseOptions,
+): Promise<SafeParsedData<T>> {
+  const cookie = getCookie(event, key)
+  const finalSchema = schema instanceof z.ZodType ? schema : z.object(schema)
+  return finalSchema.safeParseAsync(cookie, parseOptions) as Promise<SafeParsedData<T>>
 }
 
 /**
