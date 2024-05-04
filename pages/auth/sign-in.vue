@@ -1,4 +1,5 @@
 <script setup lang="ts">
+definePageMeta({ middleware: 'logged-in' })
 const route = useRoute()
 const { status } = await useAuthorize(route.query)
 </script>
