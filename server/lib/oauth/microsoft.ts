@@ -179,9 +179,7 @@ export function microsoftEventHandler({ config, onSuccess, onError }: OAuthConfi
       return onError(event, error)
     }
 
-    return onSuccess(event, {
-      user,
-      tokens,
-    })
+    if (onSuccess)
+      return onSuccess(event, { user, tokens })
   })
 }
