@@ -1,5 +1,4 @@
 import type { H3Event } from 'h3'
-import { userTransformer } from '../transformer/user'
 import { clearRefreshToken, createRefreshToken } from '../service/refresh-token'
 import type { RefreshToken, User } from '~/types'
 import { STORAGE_KEYS } from '~/constants'
@@ -9,7 +8,7 @@ export async function requireRefreshToken(event: H3Event) {
 }
 
 export async function setTokens(event: H3Event, user: User) {
-  const accessToken = generateAccessToken(event, userTransformer(user))
+  const accessToken = generateAccessToken(event, user)
   const refreshToken = await createRefreshToken({ userId: user.id, expireAt: expireAt(1) })
   return { accessToken, refreshToken: refreshToken[0] }
 }

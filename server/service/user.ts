@@ -11,3 +11,7 @@ export async function getUserByEmail(email: string) {
     where: (users, { eq }) => eq(users.email, email),
   })
 }
+
+export async function getUserByTokenId(tokenId: string) {
+  return await getUserFromRt.execute({ id: tokenId })
+}
