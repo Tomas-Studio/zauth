@@ -17,6 +17,7 @@ export function useUserSession() {
     user: computed(() => userState.value || null),
     logout,
     token: computed(() => accessToken.value),
+    refresh: refreshAccessToken,
   }
 }
 
@@ -44,5 +45,15 @@ async function logout() {
     .then(() => {
       useAccessToken().value = ''
       navigateTo('/')
+    })
+}
+
+/**
+ * Get a new access token
+ */
+async function refreshAccessToken() {
+  await useRequestFetch()('/api/auth/refresh-token')
+    .then((data) => {
+      setToken(data.accessToken)
     })
 }
