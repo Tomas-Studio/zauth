@@ -88,9 +88,9 @@ export async function parseHeaderAs<T extends z.ZodTypeAny | z.ZodRawShape>(
   parseOptions?: ParseOptions,
 ): Promise<ParsedData<T>> {
   try {
-    const headers = getHeader(event, name)
+    const header = getHeader(event, name)
     const finalSchema = schema instanceof z.ZodType ? schema : z.object(schema)
-    return await finalSchema.parseAsync(headers, parseOptions)
+    return await finalSchema.parseAsync(header, parseOptions)
   }
   catch (error) {
     throw createErrorResponse(error, 422, 'Header parsing failed')
