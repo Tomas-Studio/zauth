@@ -1,14 +1,12 @@
 <script setup lang="ts">
 definePageMeta({ middleware: 'auth' })
-const { logout, user } = useUserSession()
-
-const { data } = await useFetch('/api/auth/refresh-token')
+const { logout, user, token } = useUserSession()
 </script>
 
 <template>
   <div>
     Posts
-    {{ data }}
+    {{ token }}
     <pre>
       {{ user }}
     </pre>
