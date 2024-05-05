@@ -7,14 +7,16 @@ export const useUser = () => useStorage<User>(STORAGE_KEYS.USER, null, undefined
 
 /**
  * User session details & function
- * @returns loggedIn, user, logout
+ * @returns loggedIn, user, logout & token
  */
 export function useUserSession() {
   const userState = useUser()
+  const accessToken = useAccessToken()
   return {
     loggedIn: computed(() => Boolean(userState.value)),
     user: computed(() => userState.value || null),
     logout,
+    token: computed(() => accessToken.value),
   }
 }
 

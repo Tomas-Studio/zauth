@@ -1,4 +1,5 @@
 <script setup lang="ts">
+definePageMeta({ middleware: 'auth' })
 const { logout, user } = useUserSession()
 
 const { data } = await useFetch('/api/auth/refresh-token')
