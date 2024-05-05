@@ -1,10 +1,13 @@
 <script setup lang="ts">
 const { logout, user } = useUserSession()
+
+const { data } = await useFetch('/api/auth/refresh-token')
 </script>
 
 <template>
   <div>
     Posts
+    {{ data }}
     <pre>
       {{ user }}
     </pre>

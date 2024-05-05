@@ -4,7 +4,7 @@ import type { User } from '~/types'
 
 export function generateAccessToken(
   event: H3Event,
-  payload: Omit<User, 'createdAt' | 'updatedAt'>,
+  payload: User,
 ) {
   const config = useRuntimeConfig(event)
 
