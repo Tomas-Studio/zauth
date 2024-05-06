@@ -8,7 +8,7 @@ interface Post {
   payload: string | JwtPayload
 }
 
-const { data } = await useAPI<Post>('/api/posts')
+const { data, error } = await useAPI<Post>('/api/posts')
 </script>
 
 <template>
@@ -20,6 +20,9 @@ const { data } = await useAPI<Post>('/api/posts')
     </pre>
     <pre>
       {{ data }}
+    </pre>
+    <pre>
+      {{ error }}
     </pre>
   </div>
   <button fxc py1 w20 border @click="logout">
