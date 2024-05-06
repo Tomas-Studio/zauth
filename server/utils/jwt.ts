@@ -15,10 +15,10 @@ export async function requireAccessToken(event: H3Event) {
   const config = useRuntimeConfig(event)
   const aToken = await parseHeaderAs(event, 'Authorization', z.string())
   try {
-    return jwt.verify(aToken, config.jwt.accessSecret)
+    return jwt.verify(aToken.split(' ')[1], config.jwt.accessSecret)
   }
   catch (error) {
-    throw createErrorResponse(error, 401, 'Unauthorized!')
+    throw createErrorResponse(error, 401, 'Unauthorized Access!')
   }
 }
 
