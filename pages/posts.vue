@@ -15,15 +15,15 @@ const { data, error } = await useAPI<Post>('/api/posts')
   <div>
     Posts
     {{ token }}
-    <pre>
+    <div>
       {{ user }}
-    </pre>
-    <pre>
+    </div>
+    <div>
       {{ data }}
-    </pre>
-    <pre>
+    </div>
+    <div>
       {{ error }}
-    </pre>
+    </div>
   </div>
   <button fxc py1 w20 border @click="logout">
     Logout
