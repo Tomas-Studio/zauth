@@ -1,5 +1,4 @@
 export default defineEventHandler(async (event) => {
-  await requireRefreshToken(event)
-  const payload = await requireAccessToken(event)
+  const payload = event.context.user.id
   return { payload }
 })
