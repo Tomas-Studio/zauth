@@ -2,6 +2,7 @@ import UrlPattern from 'url-pattern'
 
 const RESTRICTED_ENDPOINTS = [
   '/api/posts',
+  '/api/posts/:id',
 ]
 
 export default defineEventHandler(async (event) => {
