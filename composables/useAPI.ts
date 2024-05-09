@@ -1,7 +1,8 @@
+import type { NitroFetchRequest } from 'nitropack'
 import type { UseFetchOptions } from '#app'
 
 export function useAPI<T>(
-  url: string | (() => string),
+  url: NitroFetchRequest | Ref<NitroFetchRequest> | (() => NitroFetchRequest),
   options?: Omit<UseFetchOptions<T>, 'default'> & { default: () => T | Ref<T> },
 ) {
   const { logout, refresh, token } = useUserSession()
