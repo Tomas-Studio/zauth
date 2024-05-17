@@ -1,5 +1,5 @@
 import type { H3Event } from 'h3'
-import { clearRefreshToken, createRefreshToken } from '../service/refresh-token'
+import { clearRefreshToken, createRefreshToken } from '../service/refreshToken'
 import type { RefreshToken, User } from '~/types'
 import { STORAGE_KEYS } from '~/constants'
 
